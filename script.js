@@ -8,58 +8,185 @@ const formFeedback = document.getElementById("form-feedback");
 
 let lastRankedOffers = [];
 let lastInput = null;
+let liveRates = null;
 
+/* ════════════════════════════════════════
+   PROVIDERS — basisdata
+   Rentes worden overschreven door rates.json
+   indien beschikbaar
+   ════════════════════════════════════════ */
 const providers = [
   {
     name: "Freo",
-    baseRate: 5.1,
-    setupFee: 390,
-    flexibility: 8.6,
+    baseRate: 5.9,
+    setupFee: 0,
+    flexibility: 9.2,
     freeExtraRepayment: true,
-    earlyRepaymentFee: "Laag"
+    earlyRepaymentFee: "Geen",
+    url: "https://www.freo.nl",
+    note: "Geen afsluitkosten, volledig online"
   },
   {
-    name: "Santander",
-    baseRate: 4.8,
-    setupFee: 540,
-    flexibility: 7.5,
+    name: "Santander Consumer Finance",
+    baseRate: 5.4,
+    setupFee: 0,
+    flexibility: 7.8,
     freeExtraRepayment: true,
-    earlyRepaymentFee: "Middel"
+    earlyRepaymentFee: "Middel",
+    url: "https://www.santanderconsumer.nl",
+    note: "Via dealernetwerk en direct"
   },
   {
     name: "Lender & Spender",
-    baseRate: 5.5,
-    setupFee: 300,
-    flexibility: 8.2,
-    freeExtraRepayment: false,
-    earlyRepaymentFee: "Laag"
+    baseRate: 6.1,
+    setupFee: 0,
+    flexibility: 8.4,
+    freeExtraRepayment: true,
+    earlyRepaymentFee: "Laag",
+    url: "https://www.lenderspender.nl",
+    note: "Peer-to-peer, transparant tarief"
   },
   {
     name: "Rabobank",
-    baseRate: 5.9,
-    setupFee: 260,
+    baseRate: 6.4,
+    setupFee: 0,
     flexibility: 7.0,
     freeExtraRepayment: false,
-    earlyRepaymentFee: "Middel"
+    earlyRepaymentFee: "Middel",
+    url: "https://www.rabobank.nl",
+    note: "Vast kantorennetwerk, persoonlijk advies"
   },
   {
     name: "ANWB Lening",
-    baseRate: 5.3,
-    setupFee: 460,
+    baseRate: 5.7,
+    setupFee: 0,
     flexibility: 9.0,
     freeExtraRepayment: true,
-    earlyRepaymentFee: "Geen"
+    earlyRepaymentFee: "Geen",
+    url: "https://www.anwb.nl/financien/lenen",
+    note: "Voordeel voor ANWB-leden"
   },
   {
     name: "DEFAM",
-    baseRate: 4.9,
-    setupFee: 620,
+    baseRate: 5.2,
+    setupFee: 0,
     flexibility: 6.8,
     freeExtraRepayment: false,
-    earlyRepaymentFee: "Hoog"
+    earlyRepaymentFee: "Hoog",
+    url: "https://www.defam.nl",
+    note: "Gespecialiseerd in autoleningen"
+  },
+  {
+    name: "ING Bank",
+    baseRate: 6.2,
+    setupFee: 0,
+    flexibility: 7.5,
+    freeExtraRepayment: true,
+    earlyRepaymentFee: "Laag",
+    url: "https://www.ing.nl/particulier/lenen",
+    note: "Directe uitbetaling voor ING-klanten"
+  },
+  {
+    name: "ABN AMRO",
+    baseRate: 6.5,
+    setupFee: 0,
+    flexibility: 7.2,
+    freeExtraRepayment: false,
+    earlyRepaymentFee: "Middel",
+    url: "https://www.abnamro.nl/nl/prive/lenen",
+    note: "Persoonlijk advies via bank"
+  },
+  {
+    name: "Volkswagen Financial Services",
+    baseRate: 4.9,
+    setupFee: 250,
+    flexibility: 6.5,
+    freeExtraRepayment: false,
+    earlyRepaymentFee: "Hoog",
+    url: "https://www.vwfs.nl",
+    note: "Gunstig bij VW, Audi, SEAT, Škoda"
+  },
+  {
+    name: "BMW Financial Services",
+    baseRate: 4.7,
+    setupFee: 295,
+    flexibility: 6.8,
+    freeExtraRepayment: false,
+    earlyRepaymentFee: "Hoog",
+    url: "https://www.bmw.nl/financieren",
+    note: "Exclusief voor BMW / MINI"
+  },
+  {
+    name: "Mercedes-Benz Financial Services",
+    baseRate: 4.8,
+    setupFee: 295,
+    flexibility: 6.6,
+    freeExtraRepayment: false,
+    earlyRepaymentFee: "Hoog",
+    url: "https://www.mercedes-benz.nl/financieren",
+    note: "Exclusief voor Mercedes-Benz"
+  },
+  {
+    name: "Alpha Credit",
+    baseRate: 5.6,
+    setupFee: 175,
+    flexibility: 7.8,
+    freeExtraRepayment: true,
+    earlyRepaymentFee: "Laag",
+    url: "https://www.alphacredit.nl",
+    note: "Gespecialiseerd in consumptief krediet"
   }
 ];
 
+/* ════════════════════════════════════════
+   LIVE RENTES — rates.json
+   Maak een bestand rates.json aan op je server:
+   {
+     "updated": "2025-01-15",
+     "source": "Handmatig bijgewerkt op basis van aanbiederpagina's",
+     "rates": {
+       "Freo": 5.9,
+       "Santander Consumer Finance": 5.4,
+       ...
+     }
+   }
+   ════════════════════════════════════════ */
+async function fetchLiveRates() {
+  try {
+    const res = await fetch("rates.json", { cache: "no-cache" });
+    if (!res.ok) throw new Error("rates.json niet gevonden");
+    const data = await res.json();
+    liveRates = data;
+
+    const rateNotice = document.getElementById("rate-notice");
+    if (rateNotice && data.updated) {
+      rateNotice.textContent = `Tarieven bijgewerkt: ${data.updated} — ${data.source || "eigen bronnen"}`;
+      rateNotice.hidden = false;
+    }
+    return data.rates || {};
+  } catch (_) {
+    liveRates = null;
+    const rateNotice = document.getElementById("rate-notice");
+    if (rateNotice) {
+      rateNotice.textContent = "Indicatieve tarieven — bezoek aanbieder voor actuele rente";
+      rateNotice.hidden = false;
+    }
+    return {};
+  }
+}
+
+function applyLiveRates(rates) {
+  if (!rates || !Object.keys(rates).length) return;
+  providers.forEach(p => {
+    if (rates[p.name] !== undefined) {
+      p.baseRate = Number(rates[p.name]);
+    }
+  });
+}
+
+/* ════════════════════════════════════════
+   FORMATTERS
+   ════════════════════════════════════════ */
 const nlCurrency = new Intl.NumberFormat("nl-NL", {
   style: "currency",
   currency: "EUR",
@@ -71,7 +198,9 @@ const nlPercent = new Intl.NumberFormat("nl-NL", {
   maximumFractionDigits: 1
 });
 
-/* ─── FEEDBACK ─── */
+/* ════════════════════════════════════════
+   FEEDBACK
+   ════════════════════════════════════════ */
 function showFormFeedback(message, type = "error") {
   formFeedback.textContent = message;
   formFeedback.hidden = false;
@@ -83,7 +212,9 @@ function hideFormFeedback() {
   formFeedback.classList.remove("success");
 }
 
-/* ─── INLINE SUMMARY ─── */
+/* ════════════════════════════════════════
+   INLINE SUMMARY
+   ════════════════════════════════════════ */
 function updateInlineSummary() {
   const carPrice    = Number(document.getElementById("car-price").value)    || 0;
   const downPayment = Number(document.getElementById("down-payment").value) || 0;
@@ -99,7 +230,9 @@ function updateInlineSummary() {
   if (downEl)      downEl.textContent      = nlCurrency.format(downPayment);
 }
 
-/* ─── RADIO GROUPS ─── */
+/* ════════════════════════════════════════
+   RADIO GROUPS
+   ════════════════════════════════════════ */
 function initRadioGroup(groupId) {
   const group = document.getElementById(groupId);
   if (!group) return;
@@ -121,7 +254,9 @@ function initRadioGroup(groupId) {
   });
 }
 
-/* ─── TOGGLES ─── */
+/* ════════════════════════════════════════
+   TOGGLES
+   ════════════════════════════════════════ */
 function initToggle(toggleWrapperId, linkedFieldId) {
   const wrap = document.getElementById(toggleWrapperId);
   if (!wrap) return;
@@ -148,7 +283,9 @@ function initToggle(toggleWrapperId, linkedFieldId) {
   syncState();
 }
 
-/* ─── BEREKENING ─── */
+/* ════════════════════════════════════════
+   BEREKENING
+   ════════════════════════════════════════ */
 function annuityMonthlyPayment(principal, annualRate, months) {
   const r = annualRate / 100 / 12;
   if (r === 0) return principal / months;
@@ -168,9 +305,9 @@ function resolveRateAdjustments(formData) {
   const typeAdj     = interestType === "variable" ? -0.25 : 0;
   const ageAdj      = vehicleAge > 7 ? 0.45 : vehicleAge > 4 ? 0.2 : 0;
 
-  const creditMap     = { excellent: -0.45, good: 0, average: 0.65 };
-  const employMap     = { permanent: 0, flex: 0.2, "self-employed": 0.35, pension: 0.1, other: 0.25 };
-  const vehicleMap    = { new: -0.1, demo: -0.05, used: 0, electric: -0.15, classic: 0.3 };
+  const creditMap  = { excellent: -0.45, good: 0, average: 0.65 };
+  const employMap  = { permanent: 0, flex: 0.2, "self-employed": 0.35, pension: 0.1, other: 0.25 };
+  const vehicleMap = { new: -0.1, demo: -0.05, used: 0, electric: -0.15, classic: 0.3 };
 
   return durationAdj + typeAdj + ageAdj
     + (creditMap[creditProfile]  ?? 0)
@@ -179,9 +316,9 @@ function resolveRateAdjustments(formData) {
 }
 
 function preferenceWeights(preference) {
-  if (preference === "lowest-total")  return { costWeight: 0.72, flexWeight: 0.18, monthlyWeight: 0.10 };
-  if (preference === "highest-flex")  return { costWeight: 0.35, flexWeight: 0.50, monthlyWeight: 0.15 };
-  return                                     { costWeight: 0.55, flexWeight: 0.15, monthlyWeight: 0.30 };
+  if (preference === "lowest-total") return { costWeight: 0.72, flexWeight: 0.18, monthlyWeight: 0.10 };
+  if (preference === "highest-flex") return { costWeight: 0.35, flexWeight: 0.50, monthlyWeight: 0.15 };
+  return                                    { costWeight: 0.55, flexWeight: 0.15, monthlyWeight: 0.30 };
 }
 
 function scoreOffers(offers, preference) {
@@ -195,9 +332,9 @@ function scoreOffers(offers, preference) {
   const weights = preferenceWeights(preference);
 
   return offers.map(offer => {
-    const totalScore  = 10 - ((offer.totalCost      - totalMin) / safe(totalMax, totalMin)) * 10;
-    const monthScore  = 10 - ((offer.monthlyPayment - monthMin) / safe(monthMax, monthMin)) * 10;
-    const flexScore   =      (offer.flexibility     / safe(flexMax, 0)) * 10;
+    const totalScore    = 10 - ((offer.totalCost      - totalMin) / safe(totalMax, totalMin)) * 10;
+    const monthScore    = 10 - ((offer.monthlyPayment - monthMin) / safe(monthMax, monthMin)) * 10;
+    const flexScore     =      (offer.flexibility     / safe(flexMax, 0)) * 10;
     const weightedScore =
       totalScore * weights.costWeight +
       flexScore  * weights.flexWeight +
@@ -215,7 +352,9 @@ function sortOffers(offers, sortKey) {
   return s.sort((a, b) => b.weightedScore - a.weightedScore);
 }
 
-/* ─── OFFER CARD ─── */
+/* ════════════════════════════════════════
+   OFFER CARD
+   ════════════════════════════════════════ */
 function createOfferCard(offer, tags) {
   const card = document.createElement("article");
   card.className = "offer-card";
@@ -227,10 +366,16 @@ function createOfferCard(offer, tags) {
     `<span class="offer-tag ${tag === "Goedkoopste" ? "cheap" : "premium"}">${tag}</span>`
   ).join("");
 
+  const rateSourceLabel = liveRates?.rates?.[offer.name]
+    ? `<span style="color:rgba(180,244,207,.7);font-size:.48rem;letter-spacing:.1em;">● live tarief</span>`
+    : `<span style="color:rgba(198,203,209,.3);font-size:.48rem;letter-spacing:.1em;">● indicatief</span>`;
+
   card.innerHTML = `
     <div class="offer-head">
       <div class="offer-name">${offer.name}</div>
-      <div>${tagHtml}</div>
+      <div style="display:flex;gap:.35rem;align-items:center;flex-wrap:wrap;">
+        ${tagHtml}
+      </div>
     </div>
     <div class="offer-stats">
       <div class="stat">
@@ -238,7 +383,7 @@ function createOfferCard(offer, tags) {
         <div class="stat-val">${nlCurrency.format(offer.monthlyPayment)} / mnd</div>
       </div>
       <div class="stat">
-        <div class="stat-lbl">Rente</div>
+        <div class="stat-lbl">Rente ${rateSourceLabel}</div>
         <div class="stat-val">${nlPercent.format(offer.apr)}%</div>
       </div>
       <div class="stat">
@@ -251,9 +396,16 @@ function createOfferCard(offer, tags) {
       </div>
     </div>
     <div class="offer-foot">
-      Afsluitkosten ${nlCurrency.format(offer.setupFee)} &middot;
+      ${offer.setupFee > 0 ? `Afsluitkosten ${nlCurrency.format(offer.setupFee)} &middot; ` : "Geen afsluitkosten &middot; "}
       Extra aflossen ${offer.freeExtraRepayment ? "boetevrij" : "beperkt"} &middot;
-      Vervroegd aflossen: ${offer.earlyRepaymentFee}
+      Vervroegd: ${offer.earlyRepaymentFee} &middot;
+      ${offer.note}
+    </div>
+    <div class="offer-foot" style="margin-top:.35rem;">
+      <a href="${offer.url}" target="_blank" rel="noreferrer noopener"
+         style="color:rgba(198,203,209,.38);border-bottom:1px solid rgba(198,203,209,.15);font-size:.52rem;letter-spacing:.12em;text-transform:uppercase;">
+        Bekijk aanbieder ↗
+      </a>
     </div>
   `;
   return card;
@@ -271,7 +423,9 @@ function triggerResultReveal() {
   resultWrap.classList.add("reveal");
 }
 
-/* ─── RENDER ─── */
+/* ════════════════════════════════════════
+   RENDER
+   ════════════════════════════════════════ */
 function renderResults(rankedOffers, input) {
   const offersForGrid     = sortOffers(rankedOffers, sortOffersSelect.value);
   const cheapestByMonthly = [...rankedOffers].sort((a, b) => a.monthlyPayment - b.monthlyPayment)[0];
@@ -306,12 +460,14 @@ function renderResults(rankedOffers, input) {
   document.getElementById("focus-value").textContent       = input.preferenceLabel;
   document.getElementById("negotiation-value").textContent = spread > 35 ? "Sterk" : spread > 20 ? "Gemiddeld" : "Beperkt";
   document.getElementById("result-footnote").textContent   =
-    `${bestOverall.name} past volgens dit profiel het beste bij uw gekozen focus: ${input.preferenceLabel.toLowerCase()}.`;
+    `${bestOverall.name} past het beste bij uw profiel — bezoek de aanbieder voor de definitieve offerte.`;
 
   triggerResultReveal();
 }
 
-/* ─── RUN ─── */
+/* ════════════════════════════════════════
+   RUN COMPARISON
+   ════════════════════════════════════════ */
 function runComparison(formData) {
   const carPrice    = Number(formData.get("carPrice"));
   const downPayment = Number(formData.get("downPayment"));
@@ -371,7 +527,9 @@ function runComparison(formData) {
   resultWrap.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
-/* ─── EVENTS ─── */
+/* ════════════════════════════════════════
+   EVENTS
+   ════════════════════════════════════════ */
 loanForm.addEventListener("submit", e => {
   e.preventDefault();
   const btn = loanForm.querySelector(".calc-btn");
@@ -449,7 +607,9 @@ window.addEventListener("scroll", () => {
 
 document.getElementById("yr").textContent = new Date().getFullYear();
 
-/* ─── RESTORE ─── */
+/* ════════════════════════════════════════
+   RESTORE
+   ════════════════════════════════════════ */
 function restoreSavedFormData() {
   updateInlineSummary();
 
@@ -509,7 +669,9 @@ function restoreSavedFormData() {
   }
 }
 
-/* ─── INIT ─── */
+/* ════════════════════════════════════════
+   INIT
+   ════════════════════════════════════════ */
 initRadioGroup("interest-type-group");
 initRadioGroup("preference-group");
 initRadioGroup("payment-freq-group");
@@ -519,4 +681,7 @@ initToggle("extra-toggle",     "extra-field");
 initToggle("insurance-toggle", null);
 initToggle("gap-toggle",       null);
 
-restoreSavedFormData();
+fetchLiveRates().then(rates => {
+  applyLiveRates(rates);
+  restoreSavedFormData();
+});

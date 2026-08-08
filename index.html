@@ -64,19 +64,19 @@
 
         <!-- Stappen indicator -->
         <div class="form-steps" aria-label="Formulier stappen">
-          <div class="form-step active">
+          <div class="form-step active" data-step="1">
             <div class="form-step-num">1</div>
             Auto
           </div>
-          <div class="form-step">
+          <div class="form-step" data-step="2">
             <div class="form-step-num">2</div>
             Financiering
           </div>
-          <div class="form-step">
+          <div class="form-step" data-step="3">
             <div class="form-step-num">3</div>
             Profiel
           </div>
-          <div class="form-step">
+          <div class="form-step" data-step="4">
             <div class="form-step-num">4</div>
             Voorkeur
           </div>
@@ -84,257 +84,257 @@
 
         <form class="valuation-form" id="loan-form" novalidate>
           <div class="form-grid">
+            <div class="wizard-step" data-step="1">
+              <div class="form-section-title">Voertuig</div>
+              <p class="wizard-step-copy">Begin met aankoopprijs, aanbetaling en voertuigtype.</p>
 
-            <!-- ── SECTIE 1: AUTO ── -->
-            <div class="form-section-title">Voertuig</div>
-
-            <div class="field">
-              <label class="field-lbl" for="car-price">
-                Aankoopprijs
-                <span class="req" aria-hidden="true">*</span>
-              </label>
-              <div class="fi-wrap">
-                <span class="fi-prefix">€</span>
-                <input class="fi" id="car-price" name="carPrice" type="number" min="2500" step="500" value="28500" required placeholder="28.500">
-              </div>
-              <p class="field-help">Inclusief BTW, exclusief rijklaarkosten.</p>
-            </div>
-
-            <div class="field">
-              <label class="field-lbl" for="down-payment">
-                Aanbetaling
-                <span class="req" aria-hidden="true">*</span>
-              </label>
-              <div class="fi-wrap">
-                <span class="fi-prefix">€</span>
-                <input class="fi" id="down-payment" name="downPayment" type="number" min="0" step="500" value="4500" required placeholder="4.500">
-              </div>
-              <p class="field-help">Hogere aanbetaling verlaagt rente en maandlast.</p>
-            </div>
-
-            <div class="field">
-              <label class="field-lbl" for="vehicle-age">Leeftijd auto</label>
-              <div class="fi-wrap">
-                <input class="fi" id="vehicle-age" name="vehicleAge" type="number" min="0" max="18" value="4" required placeholder="4">
-                <span class="fi-suffix">jaar</span>
-              </div>
-              <p class="field-help">Beïnvloedt acceptatiecriteria en renteopslag.</p>
-            </div>
-
-            <div class="field">
-              <label class="field-lbl" for="vehicle-type">Type voertuig</label>
-              <select class="fi" id="vehicle-type" name="vehicleType">
-                <option value="new">Nieuw — 0 km</option>
-                <option value="demo">Demo — &lt; 6 mnd / 6.000 km</option>
-                <option value="used" selected>Gebruikt — particulier of dealer</option>
-                <option value="electric">Elektrisch / PHEV</option>
-                <option value="classic">Oldtimer / Klassiek</option>
-              </select>
-            </div>
-
-            <!-- ── SECTIE 2: FINANCIERING ── -->
-            <div class="form-section-title">Financiering</div>
-
-            <div class="field">
-              <label class="field-lbl" for="loan-duration">Looptijd</label>
-              <select class="fi" id="loan-duration" name="durationMonths">
-                <option value="6">6 maanden</option>
-                <option value="12">12 maanden</option>
-                <option value="24">24 maanden</option>
-                <option value="36">36 maanden</option>
-                <option value="48" selected>48 maanden</option>
-                <option value="60">60 maanden</option>
-                <option value="72">72 maanden</option>
-                <option value="84">84 maanden</option>
-                <option value="96">96 maanden</option>
-                <option value="120">120 maanden</option>
-              </select>
-              <p class="field-help">Langere looptijd = lagere maandlast, hogere totaalkosten.</p>
-            </div>
-
-            <div class="field">
-              <label class="field-lbl" for="loan-type">Leningvorm</label>
-              <select class="fi" id="loan-type" name="loanType">
-                <option value="annuity" selected>Annuïteitenlening — vaste maandlast</option>
-                <option value="linear">Lineaire lening — dalende maandlast</option>
-                <option value="balloon">Ballonlening — lage maandlast, slotbetaling</option>
-                <option value="financial-lease">Financial lease</option>
-                <option value="operational-lease">Operational lease</option>
-              </select>
-            </div>
-
-            <!-- Rentevorm als radio-groep -->
-            <div class="field full">
-              <span class="field-lbl">Rentevorm</span>
-              <div class="fi-group" id="interest-type-group" role="radiogroup" aria-label="Rentevorm">
-                <label class="fi-radio active" id="radio-fixed">
-                  <input type="radio" name="interestType" value="fixed" checked>
-                  <span class="fi-radio-dot"></span>
-                  Vaste rente — zekerheid over looptijd
+              <div class="field">
+                <label class="field-lbl" for="car-price">
+                  Aankoopprijs
+                  <span class="req" aria-hidden="true">*</span>
                 </label>
-                <label class="fi-radio" id="radio-variable">
-                  <input type="radio" name="interestType" value="variable">
-                  <span class="fi-radio-dot"></span>
-                  Variabele rente — kans op lagere kosten
-                </label>
+                <div class="fi-wrap">
+                  <span class="fi-prefix">€</span>
+                  <input class="fi" id="car-price" name="carPrice" type="number" min="2500" step="500" value="28500" required placeholder="28.500">
+                </div>
+                <p class="field-help">Inclusief BTW, exclusief rijklaarkosten.</p>
               </div>
-              <p class="field-help">Vaste rente geeft stabiliteit. Variabele rente kan goedkoper uitpakken bij dalende marktrente.</p>
-            </div>
 
-            <!-- Slotbetaling toggle -->
-            <div class="field full">
-              <span class="field-lbl">Slotbetaling / Restwaarde</span>
-              <label class="fi-toggle-wrap" id="balloon-toggle" for="balloon-input">
-                <span class="fi-toggle-lbl">Slotbetaling instellen (ballonlening)</span>
-                <span class="fi-toggle">
-                  <input type="checkbox" id="balloon-input" name="hasBalloon">
-                  <span class="fi-toggle-track"></span>
-                  <span class="fi-toggle-thumb"></span>
-                </span>
-              </label>
-            </div>
-
-            <div class="field" id="balloon-field" style="display:none;">
-              <label class="field-lbl" for="balloon-amount">Slotbetaling</label>
-              <div class="fi-wrap">
-                <span class="fi-prefix">€</span>
-                <input class="fi" id="balloon-amount" name="balloonAmount" type="number" min="0" step="500" value="5000" placeholder="5.000">
-              </div>
-              <p class="field-help">Het bedrag dat u aan het einde in één keer betaalt.</p>
-            </div>
-
-            <!-- Extra aflossen toggle -->
-            <div class="field full">
-              <span class="field-lbl">Extra maandelijks aflossen</span>
-              <label class="fi-toggle-wrap" id="extra-toggle" for="extra-input">
-                <span class="fi-toggle-lbl">Ik wil maandelijks extra aflossen</span>
-                <span class="fi-toggle">
-                  <input type="checkbox" id="extra-input" name="hasExtra">
-                  <span class="fi-toggle-track"></span>
-                  <span class="fi-toggle-thumb"></span>
-                </span>
-              </label>
-            </div>
-
-            <div class="field" id="extra-field" style="display:none;">
-              <label class="field-lbl" for="extra-amount">Extra aflossing per maand</label>
-              <div class="fi-wrap">
-                <span class="fi-prefix">€</span>
-                <input class="fi" id="extra-amount" name="extraAmount" type="number" min="0" step="50" value="100" placeholder="100">
-              </div>
-              <p class="field-help">Verkort de looptijd en verlaagt totale rentekosten.</p>
-            </div>
-
-            <!-- ── SECTIE 3: PROFIEL ── -->
-            <div class="form-section-title">Uw profiel</div>
-
-            <div class="field">
-              <label class="field-lbl" for="credit-profile">Kredietprofiel</label>
-              <select class="fi" id="credit-profile" name="creditProfile">
-                <option value="excellent">Uitstekend — geen BKR, hoog inkomen</option>
-                <option value="good" selected>Goed — schone BKR, stabiel inkomen</option>
-                <option value="average">Gemiddeld — lichte BKR-registratie</option>
-              </select>
-              <p class="field-help">Bepaalt de rentetoeslag en acceptatiekans.</p>
-            </div>
-
-            <div class="field">
-              <label class="field-lbl" for="employment-type">Dienstverband</label>
-              <select class="fi" id="employment-type" name="employmentType">
-                <option value="permanent" selected>Vast contract</option>
-                <option value="flex">Tijdelijk / flex</option>
-                <option value="self-employed">Zelfstandig ondernemer (ZZP)</option>
-                <option value="pension">Pensioen / AOW</option>
-                <option value="other">Overig</option>
-              </select>
-            </div>
-
-            <!-- Betalingstermijn als radio-groep -->
-            <div class="field full">
-              <span class="field-lbl">Betalingstermijn</span>
-              <div class="fi-group" id="payment-freq-group" role="radiogroup" aria-label="Betalingstermijn">
-                <label class="fi-radio active" id="radio-monthly">
-                  <input type="radio" name="paymentFreq" value="monthly" checked>
-                  <span class="fi-radio-dot"></span>
-                  Maandelijks
+              <div class="field">
+                <label class="field-lbl" for="down-payment">
+                  Aanbetaling
+                  <span class="req" aria-hidden="true">*</span>
                 </label>
-                <label class="fi-radio" id="radio-quarterly">
-                  <input type="radio" name="paymentFreq" value="quarterly">
-                  <span class="fi-radio-dot"></span>
-                  Per kwartaal
-                </label>
-                <label class="fi-radio" id="radio-yearly">
-                  <input type="radio" name="paymentFreq" value="yearly">
-                  <span class="fi-radio-dot"></span>
-                  Jaarlijks
+                <div class="fi-wrap">
+                  <span class="fi-prefix">€</span>
+                  <input class="fi" id="down-payment" name="downPayment" type="number" min="0" step="500" value="4500" required placeholder="4.500">
+                </div>
+                <p class="field-help">Hogere aanbetaling verlaagt rente en maandlast.</p>
+              </div>
+
+              <div class="field">
+                <label class="field-lbl" for="vehicle-age">Leeftijd auto</label>
+                <div class="fi-wrap">
+                  <input class="fi" id="vehicle-age" name="vehicleAge" type="number" min="0" max="18" value="4" required placeholder="4">
+                  <span class="fi-suffix">jaar</span>
+                </div>
+                <p class="field-help">Beïnvloedt acceptatiecriteria en renteopslag.</p>
+              </div>
+
+              <div class="field">
+                <label class="field-lbl" for="vehicle-type">Type voertuig</label>
+                <select class="fi" id="vehicle-type" name="vehicleType">
+                  <option value="new">Nieuw — 0 km</option>
+                  <option value="demo">Demo — &lt; 6 mnd / 6.000 km</option>
+                  <option value="used" selected>Gebruikt — particulier of dealer</option>
+                  <option value="electric">Elektrisch / PHEV</option>
+                  <option value="classic">Oldtimer / Klassiek</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="wizard-step" data-step="2">
+              <div class="form-section-title">Financiering</div>
+              <p class="wizard-step-copy">Pas looptijd, rentevorm en extra aflossing aan.</p>
+
+              <div class="field">
+                <label class="field-lbl" for="loan-duration">Looptijd</label>
+                <select class="fi" id="loan-duration" name="durationMonths">
+                  <option value="6">6 maanden</option>
+                  <option value="12">12 maanden</option>
+                  <option value="24">24 maanden</option>
+                  <option value="36">36 maanden</option>
+                  <option value="48" selected>48 maanden</option>
+                  <option value="60">60 maanden</option>
+                  <option value="72">72 maanden</option>
+                  <option value="84">84 maanden</option>
+                  <option value="96">96 maanden</option>
+                  <option value="120">120 maanden</option>
+                </select>
+                <p class="field-help">Langere looptijd = lagere maandlast, hogere totaalkosten.</p>
+              </div>
+
+              <div class="field">
+                <label class="field-lbl" for="loan-type">Leningvorm</label>
+                <select class="fi" id="loan-type" name="loanType">
+                  <option value="annuity" selected>Annuïteitenlening — vaste maandlast</option>
+                  <option value="linear">Lineaire lening — dalende maandlast</option>
+                  <option value="balloon">Ballonlening — lage maandlast, slotbetaling</option>
+                  <option value="financial-lease">Financial lease</option>
+                  <option value="operational-lease">Operational lease</option>
+                </select>
+              </div>
+
+              <div class="field full">
+                <span class="field-lbl">Rentevorm</span>
+                <div class="fi-group" id="interest-type-group" role="radiogroup" aria-label="Rentevorm">
+                  <label class="fi-radio active" id="radio-fixed">
+                    <input type="radio" name="interestType" value="fixed" checked>
+                    <span class="fi-radio-dot"></span>
+                    Vaste rente — zekerheid over looptijd
+                  </label>
+                  <label class="fi-radio" id="radio-variable">
+                    <input type="radio" name="interestType" value="variable">
+                    <span class="fi-radio-dot"></span>
+                    Variabele rente — kans op lagere kosten
+                  </label>
+                </div>
+                <p class="field-help">Vaste rente geeft stabiliteit. Variabele rente kan goedkoper uitpakken bij dalende marktrente.</p>
+              </div>
+
+              <div class="field full">
+                <span class="field-lbl">Slotbetaling / Restwaarde</span>
+                <label class="fi-toggle-wrap" id="balloon-toggle" for="balloon-input">
+                  <span class="fi-toggle-lbl">Slotbetaling instellen (ballonlening)</span>
+                  <span class="fi-toggle">
+                    <input type="checkbox" id="balloon-input" name="hasBalloon">
+                    <span class="fi-toggle-track"></span>
+                    <span class="fi-toggle-thumb"></span>
+                  </span>
                 </label>
               </div>
-            </div>
 
-            <!-- ── SECTIE 4: VOORKEUR ── -->
-            <div class="form-section-title">Prioriteit & extras</div>
+              <div class="field" id="balloon-field" style="display:none;">
+                <label class="field-lbl" for="balloon-amount">Slotbetaling</label>
+                <div class="fi-wrap">
+                  <span class="fi-prefix">€</span>
+                  <input class="fi" id="balloon-amount" name="balloonAmount" type="number" min="0" step="500" value="5000" placeholder="5.000">
+                </div>
+                <p class="field-help">Het bedrag dat u aan het einde in één keer betaalt.</p>
+              </div>
 
-            <div class="field full">
-              <span class="field-lbl">Belangrijkste voorkeur</span>
-              <div class="fi-group" id="preference-group" role="radiogroup" aria-label="Voorkeur">
-                <label class="fi-radio active" id="radio-pref-monthly">
-                  <input type="radio" name="preferredFeature" value="lowest-monthly" checked>
-                  <span class="fi-radio-dot"></span>
-                  Laagste maandlast
-                </label>
-                <label class="fi-radio" id="radio-pref-total">
-                  <input type="radio" name="preferredFeature" value="lowest-total">
-                  <span class="fi-radio-dot"></span>
-                  Laagste totale kosten
-                </label>
-                <label class="fi-radio" id="radio-pref-flex">
-                  <input type="radio" name="preferredFeature" value="highest-flex">
-                  <span class="fi-radio-dot"></span>
-                  Maximale flexibiliteit
+              <div class="field full">
+                <span class="field-lbl">Extra maandelijks aflossen</span>
+                <label class="fi-toggle-wrap" id="extra-toggle" for="extra-input">
+                  <span class="fi-toggle-lbl">Ik wil maandelijks extra aflossen</span>
+                  <span class="fi-toggle">
+                    <input type="checkbox" id="extra-input" name="hasExtra">
+                    <span class="fi-toggle-track"></span>
+                    <span class="fi-toggle-thumb"></span>
+                  </span>
                 </label>
               </div>
-            </div>
 
-            <!-- Verzekering via lening toggle -->
-            <div class="field full">
-              <span class="field-lbl">Optionele extras</span>
-              <label class="fi-toggle-wrap" id="insurance-toggle" for="insurance-input">
-                <span class="fi-toggle-lbl">Autoverzekering meefinancieren</span>
-                <span class="fi-toggle">
-                  <input type="checkbox" id="insurance-input" name="hasInsurance">
-                  <span class="fi-toggle-track"></span>
-                  <span class="fi-toggle-thumb"></span>
-                </span>
-              </label>
-            </div>
-
-            <div class="field full">
-              <label class="fi-toggle-wrap" id="gap-toggle" for="gap-input">
-                <span class="fi-toggle-lbl">GAP-verzekering meefinancieren</span>
-                <span class="fi-toggle">
-                  <input type="checkbox" id="gap-input" name="hasGap">
-                  <span class="fi-toggle-track"></span>
-                  <span class="fi-toggle-thumb"></span>
-                </span>
-              </label>
-            </div>
-
-            <!-- Trust strip -->
-            <div class="trust-strip">
-              <div class="trust-item">
-                <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                Geen registratie vereist
-              </div>
-              <div class="trust-item">
-                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
-                Direct resultaat
-              </div>
-              <div class="trust-item">
-                <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-                Indicatief en vrijblijvend
+              <div class="field" id="extra-field" style="display:none;">
+                <label class="field-lbl" for="extra-amount">Extra aflossing per maand</label>
+                <div class="fi-wrap">
+                  <span class="fi-prefix">€</span>
+                  <input class="fi" id="extra-amount" name="extraAmount" type="number" min="0" step="50" value="100" placeholder="100">
+                </div>
+                <p class="field-help">Verkort de looptijd en verlaagt totale rentekosten.</p>
               </div>
             </div>
 
+            <div class="wizard-step" data-step="3">
+              <div class="form-section-title">Uw profiel</div>
+              <p class="wizard-step-copy">Kies het profiel dat het beste past bij uw situatie.</p>
+
+              <div class="field">
+                <label class="field-lbl" for="credit-profile">Kredietprofiel</label>
+                <select class="fi" id="credit-profile" name="creditProfile">
+                  <option value="excellent">Uitstekend — geen BKR, hoog inkomen</option>
+                  <option value="good" selected>Goed — schone BKR, stabiel inkomen</option>
+                  <option value="average">Gemiddeld — lichte BKR-registratie</option>
+                </select>
+                <p class="field-help">Bepaalt de rentetoeslag en acceptatiekans.</p>
+              </div>
+
+              <div class="field">
+                <label class="field-lbl" for="employment-type">Dienstverband</label>
+                <select class="fi" id="employment-type" name="employmentType">
+                  <option value="permanent" selected>Vast contract</option>
+                  <option value="flex">Tijdelijk / flex</option>
+                  <option value="self-employed">Zelfstandig ondernemer (ZZP)</option>
+                  <option value="pension">Pensioen / AOW</option>
+                  <option value="other">Overig</option>
+                </select>
+              </div>
+
+              <div class="field full">
+                <span class="field-lbl">Betalingstermijn</span>
+                <div class="fi-group" id="payment-freq-group" role="radiogroup" aria-label="Betalingstermijn">
+                  <label class="fi-radio active" id="radio-monthly">
+                    <input type="radio" name="paymentFreq" value="monthly" checked>
+                    <span class="fi-radio-dot"></span>
+                    Maandelijks
+                  </label>
+                  <label class="fi-radio" id="radio-quarterly">
+                    <input type="radio" name="paymentFreq" value="quarterly">
+                    <span class="fi-radio-dot"></span>
+                    Per kwartaal
+                  </label>
+                  <label class="fi-radio" id="radio-yearly">
+                    <input type="radio" name="paymentFreq" value="yearly">
+                    <span class="fi-radio-dot"></span>
+                    Jaarlijks
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="wizard-step" data-step="4">
+              <div class="form-section-title">Prioriteit & extras</div>
+              <p class="wizard-step-copy">Stel uw voorkeur en optionele verzekeringen in.</p>
+
+              <div class="field full">
+                <span class="field-lbl">Belangrijkste voorkeur</span>
+                <div class="fi-group" id="preference-group" role="radiogroup" aria-label="Voorkeur">
+                  <label class="fi-radio active" id="radio-pref-monthly">
+                    <input type="radio" name="preferredFeature" value="lowest-monthly" checked>
+                    <span class="fi-radio-dot"></span>
+                    Laagste maandlast
+                  </label>
+                  <label class="fi-radio" id="radio-pref-total">
+                    <input type="radio" name="preferredFeature" value="lowest-total">
+                    <span class="fi-radio-dot"></span>
+                    Laagste totale kosten
+                  </label>
+                  <label class="fi-radio" id="radio-pref-flex">
+                    <input type="radio" name="preferredFeature" value="highest-flex">
+                    <span class="fi-radio-dot"></span>
+                    Maximale flexibiliteit
+                  </label>
+                </div>
+              </div>
+
+              <div class="field full">
+                <span class="field-lbl">Optionele extras</span>
+                <label class="fi-toggle-wrap" id="insurance-toggle" for="insurance-input">
+                  <span class="fi-toggle-lbl">Autoverzekering meefinancieren</span>
+                  <span class="fi-toggle">
+                    <input type="checkbox" id="insurance-input" name="hasInsurance">
+                    <span class="fi-toggle-track"></span>
+                    <span class="fi-toggle-thumb"></span>
+                  </span>
+                </label>
+              </div>
+
+              <div class="field full">
+                <label class="fi-toggle-wrap" id="gap-toggle" for="gap-input">
+                  <span class="fi-toggle-lbl">GAP-verzekering meefinancieren</span>
+                  <span class="fi-toggle">
+                    <input type="checkbox" id="gap-input" name="hasGap">
+                    <span class="fi-toggle-track"></span>
+                    <span class="fi-toggle-thumb"></span>
+                  </span>
+                </label>
+              </div>
+
+              <div class="trust-strip">
+                <div class="trust-item">
+                  <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                  Geen registratie vereist
+                </div>
+                <div class="trust-item">
+                  <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+                  Direct resultaat
+                </div>
+                <div class="trust-item">
+                  <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                  Indicatief en vrijblijvend
+                </div>
+              </div>
+            </div>
           </div><!-- /.form-grid -->
 
           <!-- Inline summary -->
@@ -368,10 +368,16 @@
 
           <div class="form-feedback" id="form-feedback" role="status" aria-live="polite" hidden></div>
 
-          <button type="submit" class="calc-btn">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            <span>Vergelijk autoleningen</span>
-          </button>
+          <div class="wizard-actions">
+            <button type="button" class="wizard-btn wizard-btn-secondary" id="prev-step">Vorige</button>
+            <button type="button" class="wizard-btn wizard-btn-primary" id="next-step">
+              <span>Volgende</span>
+            </button>
+            <button type="submit" class="calc-btn" id="submit-btn">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <span>Vergelijk autoleningen</span>
+            </button>
+          </div>
 
           <div class="calc-btn-sub">Indicatief resultaat — geen BKR-registratie</div>
 

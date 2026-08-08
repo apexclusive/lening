@@ -357,7 +357,7 @@ function sortOffers(offers, sortKey) {
    ════════════════════════════════════════ */
 function createOfferCard(offer, tags) {
   const card = document.createElement("article");
-  card.className = "offer-card";
+  card.className = "offer-card offer-card--compact is-collapsed";
 
   if (tags.includes("Goedkoopste")) card.classList.add("best-cheap");
   if (tags.includes("Beste keuze")) card.classList.add("best-overall");
@@ -366,6 +366,8 @@ function createOfferCard(offer, tags) {
     `<span class="offer-tag ${tag === "Goedkoopste" ? "cheap" : "premium"}">${tag}</span>`
   ).join("");
 
+  const offerSlug = offer.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+
   const rateSourceLabel = liveRates?.rates?.[offer.name]
     ? `<span style="color:rgba(180,244,207,.7);font-size:.48rem;letter-spacing:.1em;">● live tarief</span>`
     : `<span style="color:rgba(198,203,209,.3);font-size:.48rem;letter-spacing:.1em;">● indicatief</span>`;
@@ -373,41 +375,71 @@ function createOfferCard(offer, tags) {
   card.innerHTML = `
     <div class="offer-head">
       <div class="offer-name">${offer.name}</div>
-      <div style="display:flex;gap:.35rem;align-items:center;flex-wrap:wrap;">
+      <div class="offer-tags">
         ${tagHtml}
       </div>
     </div>
-    <div class="offer-stats">
-      <div class="stat">
-        <div class="stat-lbl">Maandlast</div>
-        <div class="stat-val">${nlCurrency.format(offer.monthlyPayment)} / mnd</div>
+    <div class="offer-summary">
+      <div class="offer-summary-item">
+        <span class="summary-label">Maandlast</span>
+        <span class="summary-value">${nlCurrency.format(offer.monthlyPayment)}</span>
       </div>
-      <div class="stat">
-        <div class="stat-lbl">Rente ${rateSourceLabel}</div>
-        <div class="stat-val">${nlPercent.format(offer.apr)}%</div>
+      <div class="offer-summary-item">
+        <span class="summary-label">Totaal</span>
+        <span class="summary-value">${nlCurrency.format(offer.totalCost)}</span>
       </div>
-      <div class="stat">
-        <div class="stat-lbl">Totale kosten</div>
-        <div class="stat-val">${nlCurrency.format(offer.totalCost)}</div>
-      </div>
-      <div class="stat">
-        <div class="stat-lbl">Flexibiliteit</div>
-        <div class="stat-val">${nlPercent.format(offer.flexibility)} / 10</div>
+      <div class="offer-summary-item">
+        <span class="summary-label">Rente</span>
+        <span class="summary-value">${nlPercent.format(offer.apr)}%</span>
       </div>
     </div>
-    <div class="offer-foot">
-      ${offer.setupFee > 0 ? `Afsluitkosten ${nlCurrency.format(offer.setupFee)} &middot; ` : "Geen afsluitkosten &middot; "}
-      Extra aflossen ${offer.freeExtraRepayment ? "boetevrij" : "beperkt"} &middot;
-      Vervroegd: ${offer.earlyRepaymentFee} &middot;
-      ${offer.note}
-    </div>
-    <div class="offer-foot" style="margin-top:.35rem;">
-      <a href="${offer.url}" target="_blank" rel="noreferrer noopener"
-         style="color:rgba(198,203,209,.38);border-bottom:1px solid rgba(198,203,209,.15);font-size:.52rem;letter-spacing:.12em;text-transform:uppercase;">
-        Bekijk aanbieder ↗
-      </a>
+    <button class="offer-expand" type="button" aria-expanded="false" aria-controls="offer-details-${offerSlug}">
+      <span class="offer-expand-text">Details</span>
+      <span class="offer-expand-icon" aria-hidden="true"></span>
+    </button>
+    <div class="offer-details" id="offer-details-${offerSlug}">
+      <div class="offer-stats">
+        <div class="stat">
+          <div class="stat-lbl">Maandlast</div>
+          <div class="stat-val">${nlCurrency.format(offer.monthlyPayment)} / mnd</div>
+        </div>
+        <div class="stat">
+          <div class="stat-lbl">Rente ${rateSourceLabel}</div>
+          <div class="stat-val">${nlPercent.format(offer.apr)}%</div>
+        </div>
+        <div class="stat">
+          <div class="stat-lbl">Totale kosten</div>
+          <div class="stat-val">${nlCurrency.format(offer.totalCost)}</div>
+        </div>
+        <div class="stat">
+          <div class="stat-lbl">Flexibiliteit</div>
+          <div class="stat-val">${nlPercent.format(offer.flexibility)} / 10</div>
+        </div>
+      </div>
+      <div class="offer-foot">
+        ${offer.setupFee > 0 ? `Afsluitkosten ${nlCurrency.format(offer.setupFee)} &middot; ` : "Geen afsluitkosten &middot; "}
+        Extra aflossen ${offer.freeExtraRepayment ? "boetevrij" : "beperkt"} &middot;
+        Vervroegd: ${offer.earlyRepaymentFee} &middot;
+        ${offer.note}
+      </div>
+      <div class="offer-foot offer-foot-link">
+        <a href="${offer.url}" target="_blank" rel="noreferrer noopener">
+          Bekijk aanbieder ↗
+        </a>
+      </div>
     </div>
   `;
+
+  const expandButton = card.querySelector(".offer-expand");
+  if (expandButton) {
+    expandButton.addEventListener("click", () => {
+      const isExpanded = card.classList.toggle("expanded");
+      expandButton.setAttribute("aria-expanded", String(isExpanded));
+      const text = expandButton.querySelector(".offer-expand-text");
+      if (text) text.textContent = isExpanded ? "Sluiten" : "Details";
+    });
+  }
+
   return card;
 }
 
@@ -598,11 +630,17 @@ resetButton.addEventListener("click", () => {
   window.scrollTo({ top: 0, behavior: "smooth" });
 });
 
+let progressFrame = null;
 window.addEventListener("scroll", () => {
-  const scrollTop = window.scrollY;
-  const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-  document.getElementById("progress").style.width =
-    `${maxScroll > 0 ? (scrollTop / maxScroll) * 100 : 0}%`;
+  if (progressFrame) return;
+  progressFrame = requestAnimationFrame(() => {
+    const scrollTop = window.scrollY;
+    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    const width = maxScroll > 0 ? (scrollTop / maxScroll) * 100 : 0;
+    const progressBar = document.getElementById("progress");
+    if (progressBar) progressBar.style.width = `${Math.min(100, Math.max(0, width))}%`;
+    progressFrame = null;
+  });
 }, { passive: true });
 
 document.getElementById("yr").textContent = new Date().getFullYear();
@@ -662,10 +700,11 @@ function restoreSavedFormData() {
     });
 
     updateInlineSummary();
-    showFormFeedback("Eerder ingevulde waarden zijn hersteld. Bereken opnieuw voor de nieuwste vergelijking.", "success");
+    hideFormFeedback();
   } catch (_) {
     try { localStorage.removeItem("apex-loan-form"); } catch (__) {}
     updateInlineSummary();
+    hideFormFeedback();
   }
 }
 
@@ -685,3 +724,8 @@ fetchLiveRates().then(rates => {
   applyLiveRates(rates);
   restoreSavedFormData();
 });
+
+const resultWrapNode = document.getElementById("result-wrap");
+if (resultWrapNode) {
+  resultWrapNode.setAttribute("data-ready", "true");
+}

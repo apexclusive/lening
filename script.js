@@ -12,7 +12,7 @@ let lastInput = null;
 
 const providers = [
   {
-    name: "NovaDrive Finance",
+    name: "Freo",
     baseRate: 5.1,
     setupFee: 390,
     flexibility: 8.6,
@@ -20,7 +20,7 @@ const providers = [
     earlyRepaymentFee: "Laag"
   },
   {
-    name: "Velocity Credit",
+    name: "Santander",
     baseRate: 4.8,
     setupFee: 540,
     flexibility: 7.5,
@@ -28,7 +28,7 @@ const providers = [
     earlyRepaymentFee: "Middel"
   },
   {
-    name: "Orion AutoFunds",
+    name: "Lender & Spender",
     baseRate: 5.5,
     setupFee: 300,
     flexibility: 8.2,
@@ -36,7 +36,7 @@ const providers = [
     earlyRepaymentFee: "Laag"
   },
   {
-    name: "Summit Lease & Loan",
+    name: "Rabobank",
     baseRate: 5.9,
     setupFee: 260,
     flexibility: 7,
@@ -44,7 +44,7 @@ const providers = [
     earlyRepaymentFee: "Middel"
   },
   {
-    name: "Atlas Mobility Finance",
+    name: "ANWB Lening",
     baseRate: 5.3,
     setupFee: 460,
     flexibility: 9,
@@ -52,7 +52,7 @@ const providers = [
     earlyRepaymentFee: "Geen"
   },
   {
-    name: "Prestige AutoKrediet",
+    name: "DEFAM",
     baseRate: 4.9,
     setupFee: 620,
     flexibility: 6.8,

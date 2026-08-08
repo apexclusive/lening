@@ -257,6 +257,13 @@ header {
 }
 
 /* H1 — strak en compact */
+
+.page-hero .hero-points {
+  margin-top: .9rem;
+}
+
+Caching metrics
+
 .page-hero h1 {
   font-family: var(--sf);
   font-size: clamp(1.4rem, 2.8vw, 2.1rem);

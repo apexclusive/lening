@@ -159,18 +159,44 @@ async function fetchLiveRates() {
     liveRates = data;
 
     const rateNotice = document.getElementById("rate-notice");
+    const rateDashboard = document.getElementById("rate-dashboard");
+    const rateDate = document.getElementById("rate-date");
+    const rateSource = document.getElementById("rate-source");
+
     if (rateNotice && data.updated) {
       rateNotice.textContent = `Tarieven bijgewerkt: ${data.updated} — ${data.source || "eigen bronnen"}`;
       rateNotice.hidden = false;
     }
+
+    if (rateDashboard && data.updated) {
+      rateDashboard.hidden = false;
+    }
+
+    if (rateDate && data.updated) {
+      rateDate.textContent = `Laatste update ${data.updated}`;
+    }
+
+    if (rateSource && data.source) {
+      rateSource.textContent = data.source;
+    }
+
     return data.rates || {};
   } catch (_) {
     liveRates = null;
     const rateNotice = document.getElementById("rate-notice");
+    const rateDashboard = document.getElementById("rate-dashboard");
+    const rateDate = document.getElementById("rate-date");
+    const rateSource = document.getElementById("rate-source");
     if (rateNotice) {
       rateNotice.textContent = "Indicatieve tarieven — bezoek aanbieder voor actuele rente";
       rateNotice.hidden = false;
     }
+    if (rateDashboard) {
+      rateDashboard.hidden = false;
+      rateDashboard.classList.add("rate-dashboard--fallback");
+    }
+    if (rateDate) rateDate.textContent = "Indicatief";
+    if (rateSource) rateSource.textContent = "Aanbiedercheck aanbevolen";
     return {};
   }
 }

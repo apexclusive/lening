@@ -223,6 +223,19 @@ function createOfferCard(offer, tags) {
   return card;
 }
 
+function animateOfferCards() {
+  const cards = offersGrid.querySelectorAll(".offer-card");
+  cards.forEach((card, index) => {
+    card.style.setProperty("--stagger", index);
+  });
+}
+
+function triggerResultReveal() {
+  resultWrap.classList.remove("reveal");
+  void resultWrap.offsetWidth;
+  resultWrap.classList.add("reveal");
+}
+
 function renderResults(rankedOffers, input) {
   const sortKey = sortOffersSelect.value;
   const offersForGrid = sortOffers(rankedOffers, sortKey);
@@ -243,6 +256,8 @@ function renderResults(rankedOffers, input) {
     }
     offersGrid.appendChild(createOfferCard(offer, tags));
   });
+
+  animateOfferCards();
 
   const avgRate = rankedOffers.reduce((acc, offer) => acc + offer.apr, 0) / rankedOffers.length;
   const topThreeMonthly = [...rankedOffers]
@@ -271,6 +286,8 @@ function renderResults(rankedOffers, input) {
 
   document.getElementById("result-footnote").textContent =
     `${bestOverall.name} past volgens dit profiel het beste bij uw gekozen focus: ${input.preferenceLabel.toLowerCase()}.`;
+
+  triggerResultReveal();
 }
 
 function runComparison(formData) {
@@ -329,12 +346,12 @@ function runComparison(formData) {
     preferenceLabel: preferenceLabelMap[preference]
   };
 
+  emptyState.hidden = true;
+  resultWrap.hidden = false;
+
   renderResults(ranked, lastInput);
 
   localStorage.setItem("apex-loan-form", JSON.stringify(Object.fromEntries(formData.entries())));
-
-  emptyState.hidden = true;
-  resultWrap.hidden = false;
   resultWrap.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
@@ -352,6 +369,7 @@ loanForm.addEventListener("submit", (event) => {
 sortOffersSelect.addEventListener("change", () => {
   if (lastRankedOffers.length && lastInput) {
     renderResults(lastRankedOffers, lastInput);
+    resultWrap.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 });
 
@@ -376,6 +394,7 @@ resetButton.addEventListener("click", () => {
   updateInlinePrincipalSummary();
   hideFormFeedback();
   resultWrap.hidden = true;
+  resultWrap.classList.remove("reveal");
   emptyState.hidden = false;
   window.scrollTo({ top: 0, behavior: "smooth" });
 });

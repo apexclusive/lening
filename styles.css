@@ -213,14 +213,14 @@ header {
   stroke-width: 1.5;
 }
 
+```css
 /* ════════════════════════════════════════
-   PAGE HERO — compacter & kleinere tekst
+   PAGE HERO — compact, minimalistisch
    ════════════════════════════════════════ */
 .page-hero {
   position: relative;
   text-align: center;
-  /* Minder padding boven/onder — tool staat centraler */
-  padding: 1.4rem var(--pd) 1.2rem;
+  padding: 1.6rem var(--pd) 1.4rem;
   overflow: hidden;
 }
 
@@ -230,8 +230,8 @@ header {
   inset: 0;
   z-index: 0;
   background:
-    radial-gradient(ellipse at 30% 60%, rgba(0,146,70,.045) 0%, transparent 55%),
-    radial-gradient(ellipse at 70% 60%, rgba(206,43,55,.045) 0%, transparent 55%);
+    radial-gradient(ellipse at 30% 60%, rgba(0,146,70,.04) 0%, transparent 55%),
+    radial-gradient(ellipse at 70% 60%, rgba(206,43,55,.04) 0%, transparent 55%);
 }
 
 .page-hero::after {
@@ -246,28 +246,25 @@ header {
 .page-hero-inner {
   position: relative;
   z-index: 1;
-  max-width: 860px;   /* was 640px — meer horizontale ruimte */
+  max-width: 860px;
   margin: 0 auto;
-
-  /* Flex zodat elementen naast elkaar kunnen */
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-/* Eyebrow boven de h1 */
 .page-hero-inner > .ey {
-  margin-bottom: .75rem;
+  margin-bottom: .6rem;
 }
 
-/* H1 — flink kleiner dan origineel */
+/* H1 — strak en compact */
 .page-hero h1 {
   font-family: var(--sf);
-  font-size: clamp(1.3rem, 2.6vw, 2rem);   /* was clamp(2rem,4vw,3.25rem) */
+  font-size: clamp(1.4rem, 2.8vw, 2.1rem);
   font-weight: 300;
-  line-height: 1.1;
+  line-height: 1.12;
   letter-spacing: .02em;
-  margin-bottom: .55rem;
+  margin-bottom: 0;
 }
 
 .page-hero h1 em {
@@ -278,6 +275,8 @@ header {
   background-clip: text;
   color: transparent;
   animation: csh 7s ease-in-out infinite;
+  font-size: .88em;
+  opacity: .85;
 }
 
 @keyframes csh {
@@ -286,60 +285,50 @@ header {
   100% { background-position: 0% center; }
 }
 
-/* Subtitel — iets kleiner & betere kleur */
-.page-hero p {
-  color: var(--mt);
-  font-size: .82rem;       /* was .9rem */
-  line-height: 1.7;
-  max-width: 52ch;
-  margin: 0 auto;
-}
-
-/* hero-note + hero-points op één rij */
+/* hero-meta: note + points op één rij */
 .hero-meta {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 1.2rem;
+  gap: 1rem;
   flex-wrap: wrap;
-  margin-top: .9rem;
+  margin-top: 1.1rem;
 }
 
 .hero-note {
   display: inline-flex;
   align-items: center;
-  gap: .65rem;
+  gap: .6rem;
   background: rgba(198,203,209,.04);
-  border: 1px solid rgba(198,203,209,.14);
-  padding: .45rem 1rem;
+  border: 1px solid rgba(198,203,209,.13);
+  padding: .4rem .9rem;
   font-family: var(--lb);
-  font-size: .58rem;
+  font-size: .56rem;
   letter-spacing: .14em;
   text-transform: uppercase;
-  color: rgba(198,203,209,.5);
-  margin-top: 0;     /* reset — zit nu in .hero-meta */
+  color: rgba(198,203,209,.48);
+  white-space: nowrap;
 }
 
 .hero-points {
   display: flex;
   justify-content: center;
-  gap: .55rem;
+  gap: .45rem;
   flex-wrap: wrap;
-  margin-top: 0;     /* reset */
 }
 
 .hero-points span {
   display: inline-flex;
   align-items: center;
-  gap: .4rem;
-  padding: .3rem .65rem;
-  border: 1px solid rgba(198,203,209,.12);
-  background: rgba(255,255,255,.025);
+  gap: .38rem;
+  padding: .28rem .6rem;
+  border: 1px solid rgba(198,203,209,.11);
+  background: rgba(255,255,255,.02);
   font-family: var(--lb);
-  font-size: .54rem;
-  letter-spacing: .14em;
+  font-size: .52rem;
+  letter-spacing: .13em;
   text-transform: uppercase;
-  color: rgba(198,203,209,.45);
+  color: rgba(198,203,209,.4);
 }
 
 .hero-points span::before {
@@ -347,7 +336,8 @@ header {
   width: 4px; height: 4px;
   border-radius: 50%;
   background: var(--pt);
-  opacity: .5;
+  opacity: .45;
+  flex-shrink: 0;
 }
 
 /* ── TRI DIVIDER ── */

@@ -213,7 +213,6 @@ header {
   stroke-width: 1.5;
 }
 
-```css
 /* ════════════════════════════════════════
    PAGE HERO — compact, minimalistisch
    ════════════════════════════════════════ */
@@ -1160,3 +1159,36 @@ footer::before {
   .result-wrap.reveal > *,
   .result-wrap.reveal .offer-card { animation: none; opacity: 1; transform: none; }
 }
+
+/* ── RUIMTE TUSSEN RESULT BLOKJES ── */
+.result-wrap > * + * {
+  margin-top: 6px;
+}
+
+.betalen-wrap,
+.result-main,
+.offers-section,
+.insight-strip,
+.detail-section,
+.disclaimer,
+.other-tools,
+.cta-wrap,
+.methodology {
+  margin-top: 6px;
+}
+
+/* Subtiele hover op de blokken */
+.betalen-wrap,
+.result-main,
+.offers-section,
+.insight-strip,
+.detail-section,
+.other-tools,
+.cta-wrap,
+.methodology {
+  transition: border-color .3s;
+}
+
+.betalen-wrap:hover   { border-color: rgba(198,203,209,.45); }
+.result-main:hover,
+.offers-section:hover { border-color: rgba(198,203,209,.28); }

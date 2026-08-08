@@ -9,6 +9,9 @@ const formFeedback = document.getElementById("form-feedback");
 let lastRankedOffers = [];
 let lastInput = null;
 let liveRates = null;
+let currentStep = 1;
+const totalSteps = 4;
+const completedSteps = new Set();
 
 /* ════════════════════════════════════════
    PROVIDERS — basisdata
@@ -236,6 +239,79 @@ function showFormFeedback(message, type = "error") {
 function hideFormFeedback() {
   formFeedback.hidden = true;
   formFeedback.classList.remove("success");
+}
+
+function updateStepIndicators() {
+  document.querySelectorAll(".form-step").forEach(stepEl => {
+    const stepNumber = Number(stepEl.dataset.step || 0);
+    const isActive = stepNumber === currentStep;
+    const isDone = completedSteps.has(stepNumber);
+    stepEl.classList.toggle("active", isActive);
+    stepEl.classList.toggle("done", isDone);
+    if (isActive) {
+      stepEl.setAttribute("aria-current", "step");
+    } else {
+      stepEl.removeAttribute("aria-current");
+    }
+  });
+}
+
+function updateWizardButtons() {
+  const prevButton = document.getElementById("prev-step");
+  const nextButton = document.getElementById("next-step");
+  const submitButton = document.getElementById("submit-btn");
+
+  if (prevButton) prevButton.hidden = currentStep === 1;
+  if (nextButton) nextButton.hidden = currentStep === totalSteps;
+  if (submitButton) submitButton.hidden = currentStep !== totalSteps;
+}
+
+function showStep(step) {
+  const nextStep = Math.min(totalSteps, Math.max(1, Number(step) || 1));
+  currentStep = nextStep;
+
+  document.querySelectorAll(".wizard-step").forEach(stepEl => {
+    const isActive = Number(stepEl.dataset.step) === currentStep;
+    stepEl.classList.toggle("active", isActive);
+  });
+
+  updateStepIndicators();
+  updateWizardButtons();
+  hideFormFeedback();
+}
+
+function validateStep(step) {
+  const stepEl = loanForm.querySelector(`.wizard-step[data-step="${step}"]`);
+  if (!stepEl) return true;
+
+  const requiredFields = Array.from(stepEl.querySelectorAll("input[required], select[required]"));
+  const firstInvalid = requiredFields.find(field => !field.checkValidity());
+
+  if (firstInvalid) {
+    firstInvalid.focus();
+    firstInvalid.reportValidity();
+    showFormFeedback("Vul eerst de verplichte velden in voor deze stap.", "error");
+    return false;
+  }
+
+  hideFormFeedback();
+  return true;
+}
+
+function goToNextStep() {
+  if (!validateStep(currentStep)) return;
+
+  completedSteps.add(currentStep);
+
+  if (currentStep < totalSteps) {
+    showStep(currentStep + 1);
+  }
+}
+
+function goToPreviousStep() {
+  if (currentStep > 1) {
+    showStep(currentStep - 1);
+  }
 }
 
 /* ════════════════════════════════════════
@@ -590,6 +666,14 @@ function runComparison(formData) {
    ════════════════════════════════════════ */
 loanForm.addEventListener("submit", e => {
   e.preventDefault();
+
+  if (currentStep !== totalSteps) {
+    goToNextStep();
+    return;
+  }
+
+  completedSteps.add(currentStep);
+
   const btn = loanForm.querySelector(".calc-btn");
   btn.classList.add("loading");
   runComparison(new FormData(loanForm));
@@ -606,6 +690,18 @@ sortOffersSelect.addEventListener("change", () => {
 ["car-price", "down-payment", "loan-duration"].forEach(id => {
   const el = document.getElementById(id);
   if (el) el.addEventListener("input", () => { updateInlineSummary(); hideFormFeedback(); });
+});
+
+document.getElementById("prev-step").addEventListener("click", goToPreviousStep);
+document.getElementById("next-step").addEventListener("click", goToNextStep);
+
+document.querySelectorAll(".form-step").forEach(stepEl => {
+  stepEl.addEventListener("click", () => {
+    const targetStep = Number(stepEl.dataset.step || 0);
+    if (targetStep <= currentStep && targetStep > 0) {
+      showStep(targetStep);
+    }
+  });
 });
 
 resetButton.addEventListener("click", () => {
@@ -653,6 +749,8 @@ resetButton.addEventListener("click", () => {
   resultWrap.hidden = true;
   resultWrap.classList.remove("reveal");
   emptyState.hidden = false;
+  completedSteps.clear();
+  showStep(1);
   window.scrollTo({ top: 0, behavior: "smooth" });
 });
 
@@ -745,6 +843,8 @@ initToggle("balloon-toggle",   "balloon-field");
 initToggle("extra-toggle",     "extra-field");
 initToggle("insurance-toggle", null);
 initToggle("gap-toggle",       null);
+
+showStep(1);
 
 fetchLiveRates().then(rates => {
   applyLiveRates(rates);
